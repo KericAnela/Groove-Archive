@@ -1,6 +1,6 @@
 # Groove Archive
 
-Groove Archive is a personal cataloging app for organization, rating, and tracking of vinyl records,cassette tapes, and CDs. It allows collectors to maintain their archive history, log condition grades, and attach photos of rare album art directly from their device.
+Groove Archive is a personal cataloging app for organization, rating, and tracking of vinyl records, cassette tapes, and CDs. It allows collectors to maintain their archive history, log condition grades, and attach photos of rare album art directly from their device.
 
 ## How to run the project
 
@@ -22,3 +22,8 @@ Groove Archive is a personal cataloging app for organization, rating, and tracki
 - [ ] Local data caching for offline support 
 - [ ] Secure email and password login using Supabase; 
 - [ ] Strict input validation, keyboard handling, and global state management via Context or Zustand
+
+## Screenshots
+
+![Home in light mode](docs/home-light.png)
+![Home in dark mode](docs/home-dark.png)

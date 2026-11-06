@@ -1,37 +1,50 @@
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View, StyleProp, ViewStyle } from 'react-native';
 import type { Music } from '@/types';
+import { useTheme } from '@/hooks/use-theme';
+import { Spacing, FontSize, Radius } from '@/constants/theme';
 
 type MusicCardProps = {
     music: Music;
+    style?: StyleProp<ViewStyle>;
 };
 
-export default function MusicCard({ music }: MusicCardProps) {
+export default function MusicCard({ music, style }: MusicCardProps) {
+    const theme = useTheme();
+
     return (
         <Pressable
             onPress={() => console.log('Open', music.title)}
-            style={({ pressed }) => [styles.card, pressed && styles.pressed]}
+            style={({ pressed }) => [
+                styles.card,
+                { backgroundColor: theme.card, borderColor: theme.border },
+                pressed && styles.pressed,
+                style,
+            ]}
         >
-
-            {music.image ? (
-                <Image source={{ uri: music.image }} style={styles.image} />
-            ) : (
-                <View style={[styles.image, styles.placeholderContainer]}>
-                    <Text style={styles.placeholderText}>No Image</Text>
-                </View>
-            )}
+            <View style={styles.imageContainer}>
+                {music.image ? (
+                    <Image source={{ uri: music.image }} style={styles.photo} />
+                ) : (
+                    <View style={[styles.photo, styles.placeholderContainer, { backgroundColor: theme.border }]}>
+                        <Text style={[styles.placeholderText, { color: theme.muted }]}>No Image</Text>
+                    </View>
+                )}
+                <Text style={[styles.badge, { backgroundColor: theme.primary, color: theme.onPrimary }]}>
+                    {music.format.toUpperCase()}
+                </Text>
+            </View>
 
             <View style={styles.infoContainer}>
-                <Text style={styles.title} numberOfLines={1}>{music.title}</Text>
-                <Text style={styles.artist} numberOfLines={1}>{music.artist}</Text>
+                <Text style={[styles.title, { color: theme.text }]} numberOfLines={1}>
+                    {music.title}
+                </Text>
+                <Text style={[styles.artist, { color: theme.muted }]} numberOfLines={1}>
+                    {music.artist}
+                </Text>
 
                 <View style={styles.row}>
-                    <Text style={styles.formatBadge}>{music.format.toUpperCase()}</Text>
-                    <Text style={styles.year}>{music.releaseYear}</Text>
-                </View>
-
-                <View style={styles.row}>
-                    <Text style={styles.metaText}>Rating: {music.rating} stars</Text>
-                    <Text style={styles.metaText}>Condition: {music.condition}/10</Text>
+                    <Text style={[styles.year, { color: theme.muted }]}>{music.releaseYear}</Text>
+                    <Text style={[styles.metaText, { color: theme.muted }]}>Rating: {music.rating} ★</Text>
                 </View>
             </View>
         </Pressable>
@@ -40,65 +53,61 @@ export default function MusicCard({ music }: MusicCardProps) {
 
 const styles = StyleSheet.create({
     card: { 
-        borderRadius: 12, 
+        borderRadius: Radius.md, 
+        borderWidth: 1,
         overflow: 'hidden', 
-        backgroundColor: '#E6EEF7',
-        flexDirection: 'row',
-        marginVertical: 6,
-        alignItems: 'center',
     },
-    pressed: { opacity: 0.6 },
-    image: {
-        width: 90,
-        height: 90,
+    pressed: { 
+        opacity: 0.6 
+    },
+    imageContainer: {
+        position: 'relative',
+        width: '100%',
+    },
+    photo: {
+        width: '100%',
+        aspectRatio: 16 / 9,
     },
     placeholderContainer: {
-        backgroundColor: '#CBD5E1',
         justifyContent: 'center',
         alignItems: 'center',
     },
     placeholderText: {
-        fontSize: 11,
-        color: '#475569',
+        fontSize: FontSize.small,
         fontWeight: '600',
     },
+    badge: {
+        position: 'absolute',
+        top: Spacing.sm,
+        right: Spacing.sm,
+        paddingHorizontal: Spacing.sm,
+        paddingVertical: Spacing.xs / 2,
+        borderRadius: Radius.pill,
+        fontSize: FontSize.small,
+        fontWeight: 'bold',
+        overflow: 'hidden',
+    },
     infoContainer: {
-        flex: 1,
-        padding: 10,
-        justifyContent: 'center',
+        padding: Spacing.md,
+        gap: Spacing.xs,
     },
     title: {
-        fontSize: 16,
+        fontSize: FontSize.title,
         fontWeight: 'bold',
-        color: '#1E293B',
     },
     artist: {
-        fontSize: 14,
-        color: '#475569',
-        marginBottom: 6,
+        fontSize: FontSize.body,
     },
     row: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginTop: 2,
-    },
-    formatBadge: {
-        fontSize: 10,
-        fontWeight: 'bold',
-        backgroundColor: '#3B82F6',
-        color: '#FFFFFF',
-        paddingHorizontal: 6,
-        paddingVertical: 2,
-        borderRadius: 4,
-        overflow: 'hidden',
+        marginTop: Spacing.xs,
     },
     year: {
-        fontSize: 12,
-        color: '#64748B',
+        fontSize: FontSize.small,
     },
     metaText: {
-        fontSize: 12,
-        color: '#475569',
+        fontSize: FontSize.small,
     },
 });

@@ -1,48 +1,59 @@
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import type { Music } from '@/types';
+import { useTheme } from '@/hooks/use-theme';
+import { Spacing, FontSize, Radius } from '@/constants/theme';
 
 type MusicDetailsProps = {
     music: Music;
 };
 
 export default function MusicDetails({ music }: MusicDetailsProps) {
+    const theme = useTheme();
+
     return (
-        <ScrollView contentContainerStyle={styles.container}>
-            {music.image ? (
-                <Image source={{ uri: music.image }} style={styles.image} />
-            ) : (
-                <View style={[styles.image, styles.placeholderContainer]}>
-                    <Text style={styles.placeholderText}>No Image Available</Text>
-                </View>
-            )}
-
-            <View style={styles.contentContainer}>
-                <Text style={styles.title}>{music.title}</Text>
-                <Text style={styles.artist}>{music.artist}</Text>
-
-                <View style={styles.badgeRow}>
-                    <Text style={styles.formatBadge}>{music.format.toUpperCase()}</Text>
-                    <Text style={styles.year}>Released: {music.releaseYear}</Text>
-                </View>
-
-                <View style={styles.metaCard}>
-                    <View style={styles.metaItem}>
-                        <Text style={styles.metaLabel}>Rating</Text>
-                        <Text style={styles.metaValue}>{music.rating} ⭐</Text>
-                    </View>
-                    <View style={styles.separator} />
-                    <View style={styles.metaItem}>
-                        <Text style={styles.metaLabel}>Condition</Text>
-                        <Text style={styles.metaValue}>{music.condition} / 10</Text>
-                    </View>
-                </View>
-
-                {music.notes && (
-                    <View style={styles.notesContainer}>
-                        <Text style={styles.notesTitle}>Notes</Text>
-                        <Text style={styles.notesText}>{music.notes}</Text>
+        <ScrollView 
+            contentContainerStyle={[styles.container, { backgroundColor: theme.background }]}
+        >
+            <View style={[styles.centeredWrapper, { backgroundColor: theme.background }]}>
+                {/* 16:9 Photo Header */}
+                {music.image ? (
+                    <Image source={{ uri: music.image }} style={styles.image} />
+                ) : (
+                    <View style={[styles.image, styles.placeholderContainer, { backgroundColor: theme.border }]}>
+                        <Text style={[styles.placeholderText, { color: theme.muted }]}>No Image Available</Text>
                     </View>
                 )}
+
+                <View style={[styles.contentContainer, { backgroundColor: theme.card, borderColor: theme.border }]}>
+                    <Text style={[styles.title, { color: theme.text }]}>{music.title}</Text>
+                    <Text style={[styles.artist, { color: theme.muted }]}>{music.artist}</Text>
+
+                    <View style={styles.badgeRow}>
+                        <Text style={[styles.formatBadge, { backgroundColor: theme.primary, color: theme.onPrimary }]}>
+                            {music.format.toUpperCase()}
+                        </Text>
+                        <Text style={[styles.year, { color: theme.muted }]}>Released: {music.releaseYear}</Text>
+                    </View>
+
+                    <View style={[styles.metaCard, { backgroundColor: theme.background, borderColor: theme.border }]}>
+                        <View style={styles.metaRow}>
+                            <Text style={[styles.metaLabel, { color: theme.muted }]}>Rating</Text>
+                            <Text style={[styles.metaValue, { color: theme.text }]} numberOfLines={1}>{music.rating} stars</Text>
+                        </View>
+                        <View style={[styles.separator, { backgroundColor: theme.border }]} />
+                        <View style={styles.metaRow}>
+                            <Text style={[styles.metaLabel, { color: theme.muted }]}>Condition</Text>
+                            <Text style={[styles.metaValue, { color: theme.text }]} numberOfLines={1}>{music.condition} / 10</Text>
+                        </View>
+                    </View>
+
+                    {music.notes && (
+                        <View style={[styles.notesContainer, { backgroundColor: theme.background, borderColor: theme.border }]}>
+                            <Text style={[styles.notesTitle, { color: theme.text }]}>Notes</Text>
+                            <Text style={[styles.notesText, { color: theme.muted }]}>{music.notes}</Text>
+                        </View>
+                    )}
+                </View>
             </View>
         </ScrollView>
     );
@@ -50,107 +61,95 @@ export default function MusicDetails({ music }: MusicDetailsProps) {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#F8FAFC',
         flexGrow: 1,
-        paddingBottom: 24,
+    },
+    centeredWrapper: {
+        width: '100%',
+        maxWidth: 600,
+        alignSelf: 'center',
     },
     image: {
         width: '100%',
-        height: 350,
+        aspectRatio: 16 / 9,
         resizeMode: 'cover',
     },
     placeholderContainer: {
-        backgroundColor: '#CBD5E1',
         justifyContent: 'center',
         alignItems: 'center',
     },
     placeholderText: {
-        fontSize: 16,
-        color: '#475569',
+        fontSize: FontSize.body,
         fontWeight: '600',
     },
     contentContainer: {
-        padding: 20,
+        padding: Spacing.lg,
+        margin: Spacing.md,
+        borderRadius: Radius.md,
+        borderWidth: 1,
     },
     title: {
-        fontSize: 24,
+        fontSize: FontSize.hero,
         fontWeight: 'bold',
-        color: '#1E293B',
-        marginBottom: 4,
+        marginBottom: Spacing.xs,
     },
     artist: {
-        fontSize: 18,
-        color: '#475569',
-        marginBottom: 12,
+        fontSize: FontSize.title,
+        marginBottom: Spacing.md,
     },
     badgeRow: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        marginBottom: 20,
+        marginBottom: Spacing.lg,
     },
     formatBadge: {
-        fontSize: 12,
+        fontSize: FontSize.small,
         fontWeight: 'bold',
-        backgroundColor: '#3B82F6',
-        color: '#FFFFFF',
-        paddingHorizontal: 10,
-        paddingVertical: 4,
-        borderRadius: 6,
+        paddingHorizontal: Spacing.sm,
+        paddingVertical: Spacing.xs / 2,
+        borderRadius: Radius.pill,
         overflow: 'hidden',
     },
     year: {
-        fontSize: 14,
-        color: '#64748B',
+        fontSize: FontSize.small,
     },
     metaCard: {
-        flexDirection: 'row',
-        backgroundColor: '#FFFFFF',
-        borderRadius: 12,
-        padding: 16,
-        alignItems: 'center',
-        justifyContent: 'space-around',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 2,
-        elevation: 2,
-        marginBottom: 20,
+        borderRadius: Radius.sm,
+        borderWidth: 1,
+        padding: Spacing.md,
+        marginBottom: Spacing.md,
+        gap: Spacing.md,
     },
-    metaItem: {
+    metaRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
         alignItems: 'center',
     },
     metaLabel: {
-        fontSize: 12,
-        color: '#64748B',
-        marginBottom: 4,
+        fontSize: FontSize.body,
     },
     metaValue: {
-        fontSize: 16,
+        fontSize: FontSize.body,
         fontWeight: 'bold',
-        color: '#1E293B',
+        flexShrink: 1,
+        textAlign: 'right',
     },
     separator: {
-        width: 1,
-        height: '80%',
-        backgroundColor: '#E2E8F0',
+        height: 1,
+        width: '100%',
     },
     notesContainer: {
-        backgroundColor: '#FFFFFF',
-        borderRadius: 12,
-        padding: 16,
+        borderRadius: Radius.sm,
         borderWidth: 1,
-        borderColor: '#E2E8F0',
+        padding: Spacing.md,
     },
     notesTitle: {
-        fontSize: 14,
+        fontSize: FontSize.body,
         fontWeight: 'bold',
-        color: '#1E293B',
-        marginBottom: 6,
+        marginBottom: Spacing.xs,
     },
     notesText: {
-        fontSize: 14,
-        color: '#475569',
-        lineHeight: 20,
+        fontSize: FontSize.body,
+        lineHeight: 22,
     },
 });

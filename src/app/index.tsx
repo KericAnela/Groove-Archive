@@ -1,24 +1,33 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, View, StyleSheet, useWindowDimensions } from 'react-native';
 import { Stack } from 'expo-router';
 import MusicCard from '@/components/MusicCard';
+import CollectionSummary from '@/components/SummaryRow';
 import { musicList } from '@/data/music_list';
+import { Spacing } from '@/constants/theme';
 
 export default function HomeScreen() {
-    const totalItems = musicList.length;
+    const { width } = useWindowDimensions();
+    
+    const columns = width >= 900 ? 3 : width >= 600 ? 2 : 1;
+    
+    const cardWidth = (width - 2 * Spacing.md - (columns - 1) * Spacing.md) / columns;
 
     return (
         <>
             <Stack.Screen options={{ title: 'Groove Archive' }} />
-
+            
             <ScrollView contentContainerStyle={styles.container}>
-                <View style={styles.headerContainer}>
-                    <Text style={styles.headerTitle}>Archived Items</Text>
-                    <Text style={styles.badge}>{totalItems} {totalItems === 1 ? 'item' : 'items'}</Text>
+                <CollectionSummary items={musicList} />
+                
+                <View style={[styles.grid, { gap: Spacing.md }]}>
+                    {musicList.map((item, index) => (
+                        <MusicCard 
+                            key={index} 
+                            music={item} 
+                            style={{ width: cardWidth }} 
+                        />
+                    ))}
                 </View>
-
-                {musicList.map((item, index) => (
-                    <MusicCard key={index} music={item} />
-                ))}
             </ScrollView>
         </>
     );
@@ -26,29 +35,12 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
     container: {
-        padding: 16,
-        backgroundColor: '#F8FAFC',
-        flexGrow: 1,
+        paddingVertical: Spacing.sm,
     },
-    headerContainer: {
+    grid: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 16,
-    },
-    headerTitle: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: '#1E293B',
-    },
-    badge: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#FFFFFF',
-        backgroundColor: '#3B82F6',
-        paddingHorizontal: 10,
-        paddingVertical: 4,
-        borderRadius: 12,
-        overflow: 'hidden',
+        flexWrap: 'wrap',
+        paddingHorizontal: Spacing.md,
+        marginTop: Spacing.sm,
     },
 });
